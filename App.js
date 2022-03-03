@@ -6,7 +6,6 @@ import EarTrainerMenu from "./screens/EarTrainerMenuScreen";
 import EarTrainerGameScreen from "./screens/EarTrainerGameScreen";
 import colors from "./constants/colors";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
 const Stack = createNativeStackNavigator();
 
 export default function App() {

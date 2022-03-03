@@ -3,8 +3,19 @@ import React from "react";
 import colors from "../constants/colors";
 
 const OptionButton = (props) => {
+
   return (
-    <TouchableOpacity style={styles.container} onPress={props.onPress}>
+    <TouchableOpacity disabled={props.gameOver || props.answering}
+      style={[
+        styles.container,
+        props.correctAnswer && props.btnId === props.answerId
+          ? styles.validAnswer
+          : props.btnId === props.answerId && !props.correctAnswer
+          ? styles.invalidAnswer
+          : undefined,
+      ]}
+      onPress={props.onPress}
+    >
       <Text style={styles.text}> {props.children} </Text>
     </TouchableOpacity>
   );
@@ -27,5 +38,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
     borderWidth: 2,
     borderRadius: 5,
+  },
+  validAnswer: {
+    backgroundColor: "green",
+  },
+  invalidAnswer: {
+    backgroundColor: "red",
   },
 });

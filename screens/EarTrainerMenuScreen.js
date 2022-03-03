@@ -3,16 +3,25 @@ import { StyleSheet, Text, Button, View } from "react-native";
 import LevelCard from "../components/LevelCard";
 import colors from "../constants/colors";
 
-const EarTrainerMenu = props => {
+const EarTrainerMenu = (props) => {
   const [easyLevelHighScore, setEasyLevelHighScore] = useState(0);
   const [mediumLevelHighScore, setMediumLevelHighScore] = useState(0);
   const [hardLevelHighScore, setHardLevelHighScore] = useState(0);
-  
-  const handlePlayLevel = (highScore, chords) => {
-    if (chords === 6 && easyLevelHighScore < 5) {
-      console.log("You haven't unlocked this level yet.");
-    } else{
-      props.navigation.navigate("Ear Trainer")
+
+  const handlePlayLevel = (highScore, chords, level) => {
+    if (level === "easy") {
+      props.navigation.navigate("Ear Trainer", { level: "easy", highscore: highScore });
+    }
+
+    if (level === "medium" && easyLevelHighScore >= 5) {
+      props.navigation.navigate("Ear Trainer", { level: "medium", highscore: highScore });
+    } else if (level === "medium") {
+      console.log("Level locked");
+    }
+    if (level === "hard" && mediumLevelHighScore >= 10) {
+      props.navigation.navigate("Ear Trainer", { level: "hard", highscore: highScore });
+    } else if (level === "hard"){
+      console.log("Level locked!");
     }
   };
 
@@ -24,24 +33,24 @@ const EarTrainerMenu = props => {
       <View style={styles.levelsContainer}>
         <LevelCard
           highScore={easyLevelHighScore}
-          chords={4}
-          onPress={() => handlePlayLevel(easyLevelHighScore, 4)}
+          chords={6}
+          onPress={() => handlePlayLevel(easyLevelHighScore, 6, "easy")}
         >
           {" "}
           Easy{" "}
         </LevelCard>
         <LevelCard
           highScore={mediumLevelHighScore}
-          chords={6}
-          onPress={() => handlePlayLevel(mediumLevelHighScore, 6)}
+          chords={10}
+          onPress={() => handlePlayLevel(mediumLevelHighScore, 10, "medium")}
         >
           {" "}
           Medium{" "}
         </LevelCard>
         <LevelCard
           highScore={hardLevelHighScore}
-          chords={12}
-          onPress={() => handlePlayLevel(hardLevelHighScore, 12)}
+          chords={14}
+          onPress={() => handlePlayLevel(hardLevelHighScore, 14, "hard")}
         >
           {" "}
           Hard{" "}
