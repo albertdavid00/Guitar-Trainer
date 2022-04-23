@@ -6,6 +6,7 @@ import EarTrainerMenu from "./screens/EarTrainerMenuScreen";
 import EarTrainerGameScreen from "./screens/EarTrainerGameScreen";
 import colors from "./constants/colors";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import TunerScreen from "./screens/TunerScreen";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -37,6 +38,14 @@ export default function App() {
             }}
           />
           <Stack.Screen name="Ear Trainer" component={EarTrainerGameScreen} />
+          <Stack.Screen
+            name="Tuner"
+            component={TunerScreen}
+            options={{
+              title: "Tuner",
+            }}
+          />
+          
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

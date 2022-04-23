@@ -24,6 +24,7 @@ const EarTrainerGameScreen = (props) => {
   const [options, setOptions] = useState([]);
   const [answer, setAnswer] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [correctChordName, setCorrectChordName] = useState("");
   const [levelUnlockedMessage, setLevelUnlockedMessage] = useState("");
   const [selectedButtonId, setSelectedButtonId] = useState(null);
   const { level, highscore } = props.route.params;
@@ -51,11 +52,15 @@ const EarTrainerGameScreen = (props) => {
   const getNewSound = async () => {
     try {
       if (isMounted.current) {
-        const newSample = generateRandomChord();
+        let newSample = generateRandomChord();
+        while(sample && newSample && sample.name === newSample.name){
+            newSample = generateRandomChord();
+        }
         if (newSample) {
           const name = newSample.name;
           const chord = newSample.chord;
           setSample(newSample);
+          setCorrectChordName(name);
           const { sound } = await Audio.Sound.createAsync(chord);
           setSound(sound);
           console.log("Playing sound " + name);
@@ -227,52 +232,54 @@ const EarTrainerGameScreen = (props) => {
           gameOver={gameOver}
           correctAnswer={answer}
           answerId={selectedButtonId}
+          correctChordName={correctChordName}
           btnId={1}
           onPress={() => {
             handleOption(options[0], 1);
           }}
         >
-          {" "}
-          {options[0]}{" "}
+
+          {options[0]}
         </OptionButton>
         <OptionButton
           answering={answering.current}
           gameOver={gameOver}
           correctAnswer={answer}
           answerId={selectedButtonId}
+          correctChordName={correctChordName}
           btnId={2}
           onPress={() => {
             handleOption(options[1], 2);
           }}
         >
-          {" "}
-          {options[1]}{" "}
+          {options[1]}
         </OptionButton>
         <OptionButton
           answering={answering.current}
           gameOver={gameOver}
           correctAnswer={answer}
           answerId={selectedButtonId}
+          correctChordName={correctChordName}
           btnId={3}
           onPress={() => {
             handleOption(options[2], 3);
           }}
         >
-          {" "}
-          {options[2]}{" "}
+          {options[2]}
         </OptionButton>
         <OptionButton
           answering={answering.current}
           gameOver={gameOver}
           correctAnswer={answer}
           answerId={selectedButtonId}
+          correctChordName={correctChordName}
           btnId={4}
           onPress={() => {
             handleOption(options[3], 4);
           }}
         >
-          {" "}
-          {options[3]}{" "}
+          
+          {options[3]}
         </OptionButton>
       </View>
       {gameOver && (

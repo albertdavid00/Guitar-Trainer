@@ -3,7 +3,6 @@ import React from "react";
 import colors from "../constants/colors";
 
 const OptionButton = (props) => {
-
   return (
     <TouchableOpacity disabled={props.gameOver || props.answering}
       style={[
@@ -13,6 +12,7 @@ const OptionButton = (props) => {
           : props.btnId === props.answerId && !props.correctAnswer
           ? styles.invalidAnswer
           : undefined,
+        !props.correctAnswer && props.answering && props.correctChordName == props.children ? styles.highlightCorrectAnswer : undefined,
       ]}
       onPress={props.onPress}
     >
@@ -45,4 +45,8 @@ const styles = StyleSheet.create({
   invalidAnswer: {
     backgroundColor: "red",
   },
+  highlightCorrectAnswer: {
+    borderWidth: 2,
+    borderColor: "green"
+  }
 });

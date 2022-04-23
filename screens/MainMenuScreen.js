@@ -17,7 +17,7 @@ const MainMenuScreen = ({navigation}) => {
         </View>
       </View>
       <View style={styles.menuContainer}>
-        <CustomButton onPress = {() => {}}>  Tune  </CustomButton>
+        <CustomButton onPress = {() => navigation.navigate("Tuner")}>  Tune  </CustomButton>
         <CustomButton  onPress = {() => navigation.navigate("Ear Trainer Menu")}> Ear Trainer </CustomButton>
         <CustomButton> Find Song </CustomButton>
         <CustomButton> Find Chord </CustomButton>
