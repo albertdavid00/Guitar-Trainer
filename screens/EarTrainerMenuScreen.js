@@ -2,6 +2,8 @@ import React, { useRef, useState } from "react";
 import { StyleSheet, Text, Button, View } from "react-native";
 import LevelCard from "../components/LevelCard";
 import colors from "../constants/colors";
+import { useAuth } from "../contexts/AuthContext";
+
 
 const EarTrainerMenu = (props) => {
   const [easyLevelHighScore, setEasyLevelHighScore] = useState(0);
