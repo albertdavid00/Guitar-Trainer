@@ -16,7 +16,7 @@ const LevelCard = (props) => {
         <AntDesign
           name= {lock ? "lock1" : "unlock"}
           size={25}
-          color="white"
+          color={lock ? "red" : "lightgreen"}
         /> 
         <Text style={{color:'white'}}> Chords: {chords}</Text>
       </View>
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.secondary,
     borderWidth: 3,
-    borderRadius: 5,
+    borderRadius: 20,
   },
   text: {
     color: colors.text,
