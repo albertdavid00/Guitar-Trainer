@@ -13,6 +13,9 @@ import chord_samples from "../constants/chords";
 import { AntDesign } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import GameOver from "../components/GameOver";
+import { useAuth } from "../contexts/AuthContext";
+import { database } from "../firebase";
+import { ref, update } from "firebase/database";
 
 const EarTrainerGameScreen = (props) => {
   const [numOfChords, setNumOfChords] = useState(0);
@@ -27,34 +30,33 @@ const EarTrainerGameScreen = (props) => {
   const [correctChordName, setCorrectChordName] = useState("");
   const [levelUnlockedMessage, setLevelUnlockedMessage] = useState("");
   const [selectedButtonId, setSelectedButtonId] = useState(null);
-  const { level, highscore } = props.route.params;
-  const [levelHighScore, setLevelHighScore] = useState(highscore);
+  const { level, highscore, numChords } = props.route.params;
+  const levelHighScore = useRef(highscore);
   const isMounted = useRef(true);
   const lost = useRef(false);
   const answering = useRef(false);
+  const { currentUser, userData, setUserData } = useAuth();
 
   useEffect(() => {
+    if (!currentUser)
+      props.navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
+
+    setNumOfChords(numChords);
+    
     return () => {
-      // TODO  on unmount save highscore and send to menu
       isMounted.current = false;
     };
   }, []);
-  useEffect(() => {
-    if (level === "easy") {
-      setNumOfChords(6);
-    } else if (level === "medium") {
-      setNumOfChords(10);
-    } else {
-      setNumOfChords(14);
-    }
-  }, [level]);
 
   const getNewSound = async () => {
     try {
       if (isMounted.current) {
         let newSample = generateRandomChord();
-        while(sample && newSample && sample.name === newSample.name){
-            newSample = generateRandomChord();
+        while (sample && newSample && sample.name === newSample.name) {
+          newSample = generateRandomChord();
         }
         if (newSample) {
           const name = newSample.name;
@@ -72,14 +74,14 @@ const EarTrainerGameScreen = (props) => {
     }
   };
 
-  const shuffleArray = array => {
+  const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       const temp = array[i];
       array[i] = array[j];
       array[j] = temp;
     }
-  }
+  };
 
   const generateOptions = () => {
     if (sample) {
@@ -151,6 +153,7 @@ const EarTrainerGameScreen = (props) => {
         lost.current = true;
         setLives((prevState) => prevState - 1);
         setGameOver(true);
+        updateUserHighscore(level + "Highscore");
       } else {
         setLives((prevState) => prevState - 1);
         console.log("Incorrect!");
@@ -166,16 +169,34 @@ const EarTrainerGameScreen = (props) => {
       setAnswer(false);
     }, 1000);
   };
+
+  const updateUserHighscore = (levelHighScoreString) => {
+      const startHighscore = userData[levelHighScoreString];
+
+      if (startHighscore < levelHighScore.current) {
+        const { uid, ...rest } = userData;
+        let updatedUser = {...rest};
+        updatedUser[levelHighScoreString] = levelHighScore.current;
+        update(ref(database, "users/" + currentUser.uid), updatedUser).then(() =>{
+          const newUserData = {...userData};
+          newUserData[levelHighScoreString] = levelHighScore.current;
+          setUserData(newUserData);
+        });
+      }
+  }
+
+
   useEffect(() => {
-    if (score > levelHighScore) {
-      setLevelHighScore(score);
+    if (score > levelHighScore.current) {
+      levelHighScore.current = score;
     }
-    if (level === "easy" && score === 5) {
+    const lvl = level + "Highscore";
+    const startHighscore = userData[lvl];
+    if (level === "easy" && score === 5 && startHighscore < 5) {
       setLevelUnlockedMessage("New level unlocked!");
-      // TODO
-    } else if (level === "medium" && score === 10) {
+      
+    } else if (level === "medium" && score === 10 && startHighscore < 5) {
       setLevelUnlockedMessage("New level unlocked!");
-      // TODO
     }
   }, [score]);
 
@@ -238,7 +259,6 @@ const EarTrainerGameScreen = (props) => {
             handleOption(options[0], 1);
           }}
         >
-
           {options[0]}
         </OptionButton>
         <OptionButton
@@ -278,14 +298,15 @@ const EarTrainerGameScreen = (props) => {
             handleOption(options[3], 4);
           }}
         >
-          
           {options[3]}
         </OptionButton>
       </View>
       {gameOver && (
         <GameOver
           score={score}
-          levelHighScore={levelHighScore}
+          level={level}
+          numChords={numChords}
+          levelHighScore={levelHighScore.current}
           levelUnlockedMessage={levelUnlockedMessage}
           navigation={props.navigation}
         />

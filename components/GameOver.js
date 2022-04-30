@@ -3,7 +3,8 @@ import colors from "../constants/colors";
 import React from "react";
 
 const GameOver = (props) => {
-  const { score, levelHighScore, levelUnlockedMessage } = props;
+  const { score, levelHighScore, levelUnlockedMessage, numChords, level } = props;
+  
   return (
     <View style={styles.gameOverView}>
       <View style={styles.gameOverHeader}>
@@ -23,7 +24,7 @@ const GameOver = (props) => {
             title="Try again"
             onPress={() => {
                 props.navigation.navigate("Ear Trainer Menu");
-                props.navigation.navigate("Ear Trainer", { level: "easy", highscore: levelHighScore });
+                props.navigation.navigate("Ear Trainer", { level: level, highscore: levelHighScore, numChords: numChords});
             }}
           />
           <Button

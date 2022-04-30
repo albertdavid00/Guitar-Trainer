@@ -1,9 +1,11 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import colors from "../constants/colors";
+import { AntDesign } from "@expo/vector-icons";
 
 const LevelCard = (props) => {
-  const { highScore, chords } = props;
+  const { highScore, chords, lock } = props;
+
   return (
     <TouchableOpacity style={styles.boxContainer} onPress={props.onPress}>
       <View style={styles.container}>
@@ -11,6 +13,11 @@ const LevelCard = (props) => {
       </View>
       <View style={styles.details}>
         <Text style={{color:'white'}}> HighScore: {highScore} </Text>
+        <AntDesign
+          name= {lock ? "lock1" : "unlock"}
+          size={25}
+          color="white"
+        /> 
         <Text style={{color:'white'}}> Chords: {chords}</Text>
       </View>
     </TouchableOpacity>

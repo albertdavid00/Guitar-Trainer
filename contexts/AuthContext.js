@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { auth, database } from "../firebase";
-import { ref, set } from "firebase/database";
+import { orderByKey, ref, set, get } from "firebase/database";
+
 
 const AuthContext = React.createContext();
 
@@ -11,6 +12,8 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState();
+  const [userInDb, setUserInDb] = useState(false);
 
   useEffect(() => {
     const unsubcribe = auth.onAuthStateChanged((user) => {
@@ -20,37 +23,49 @@ export function AuthProvider({ children }) {
     return unsubcribe;
   }, []);
 
+  useEffect(() => {
+
+    if(userInDb){
+        if(currentUser){
+          get(ref(database, "users/" + currentUser.uid)).then(snapshot => {
+            if(snapshot.exists()){
+              const userVal = {...snapshot.val(), uid: currentUser.uid};
+              setUserData(userVal);
+            }
+          }).catch(e => console.log("Get error: ", e)); 
+        }
+    }
+  }, [userInDb, currentUser]);
+
   function register(email, username, password) {
     return auth
       .createUserWithEmailAndPassword(email, password)
       .then((credentials) => {
-        const user = {
-          uid: credentials.user.uid,
+        set(ref(database, "users/" + credentials.user.uid), {
           email: email,
           username: username,
-          highscore: 0
-        };
-        set(ref(database, "users/" + user.uid), {
-          email: email,
-          username: username,
-          highscore: 0
-        });
+          easyHighscore: 0,
+          mediumHighscore: 0,
+          hardHighscore: 0
+        }).then(() => setUserInDb(true));
         return credentials.user.updateProfile({
           displayName: username,
         });
       });
   }
   function login(email, password) {
-    return auth.signInWithEmailAndPassword(email, password);
+    return auth.signInWithEmailAndPassword(email, password).then(() => setUserInDb(true));
   }
   function logout() {
-    return auth.signOut();
+    return auth.signOut().then(() => setUserInDb(false));
   }
   function resetPassword(email) {
     return auth.sendPasswordResetEmail(email);
   }
   const value = {
     currentUser,
+    userData,
+    setUserData,
     register,
     login,
     logout,
