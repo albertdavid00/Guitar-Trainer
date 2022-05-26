@@ -2,9 +2,11 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import colors from "../constants/colors";
 const StringButton = (props) => {
+  
   return (
     <TouchableOpacity
       onPress={props.onPress}
+      disabled={props.selectedBtn !== undefined && props.selectedBtn !== props.btnId}
       style={[
         styles.stringButton,
         props.selectedBtn === props.btnId

@@ -1,49 +1,119 @@
 import { Image, StyleSheet, Text, View, Button } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import colors from "../constants/colors";
 import guitarImg from "../assets/guitar_headstock.png";
 import StringButton from "../components/StringButton";
 import { Audio } from "expo-av";
+import recordingOptions from "../constants/recordingOptions";
+import { Sound } from "expo-av/build/Audio";
+import * as FileSystem from 'expo-file-system';
 
 const TunerScreen = () => {
   const [selectedString, setSelectedString] = useState();
-  const [recording, setRecording] = useState();
+  const [buttonIsPressed, setButtonIsPressed] = useState(false);
+  const repeat = useRef(false);
+  const stringIdRef = useRef(undefined);
+  const timeoutIds = useRef([]);
+  const prevStringRef = useRef(undefined);
+  const recordingRef = useRef(false);
+  const soundFrequencyRef = useRef(undefined);
+  const sleep = time => new Promise(resolve => setTimeout(resolve, time));
+
+  useEffect(() => {
+    repeat.current = buttonIsPressed;
+    stringIdRef.current = selectedString;
+    recordChunks(stringIdRef.current);
+  }, [buttonIsPressed, selectedString])
+
+  useEffect(() => {
+    return () => {
+      for (var id of timeoutIds.current) {
+        clearTimeout(id);
+        console.log(id);
+      }
+      repeat.current = false;
+      stringIdRef.current = false;
+    };
+  }, []);
+
   const handleSelectedString = (id) => {
-    setSelectedString(id);
-  };
-  const startRecording = async () => {
-    try {
-      console.log("Requesting permissions..");
-      await Audio.requestPermissionsAsync();
-      console.log("Starting recording..");
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-      );
-      setRecording(recording);
-      console.log("Recording started");
-    } catch (err) {
-      console.error("Failed to start recording", err);
+    if (selectedString === id) {
+      setSelectedString(undefined);
+      setButtonIsPressed(false);
+    } 
+    else {
+      prevStringRef.current = id;
+      setButtonIsPressed(true);
+      setSelectedString(id);
     }
   };
-  const stopRecording = async () => {
-    try {
-      console.log("Stopping recording..");
-      setRecording(undefined);
-      await recording.stopAndUnloadAsync();
-      console.log(recording._options.android)
-      const uri = recording.getURI();
-      console.log("Recording stopped and stored at", uri);
-    } catch (err) {
-      console.log(err);
+
+  const recordChunks = async (stringId) => {
+    if (repeat.current === true && stringId === stringIdRef.current) {
+      try {
+        // start recording
+        recordingRef.current = true;
+        let rec = new Audio.Recording();
+        await Audio.requestPermissionsAsync();
+        await rec.prepareToRecordAsync();
+        await rec.startAsync();
+        console.log("Recording started");
+        
+        // length of chunk 
+        await sleep(1125);
+
+        // stop recording
+        await rec.stopAndUnloadAsync();
+        const { status } = await rec.createNewLoadedSoundAsync();
+        console.log("\nSTATUS: ", status);
+
+        let fileUri = rec.getURI();
+        console.log("Recording stopped and stored at", fileUri);
+
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST',"http://192.168.78.121:5000/post")
+        xhr.onload = () => {
+          soundFrequencyRef.current = ParseInt(xhr.response);
+          console.log(soundFrequencyRef.current);
+          
+        };
+        xhr.onerror = e => {
+          console.log(e, 'upload failed');
+        };
+        xhr.ontimeout = e => {
+          console.log(e, 'cloudinary timeout');
+        };
+        let formData = new FormData();
+        formData.append("audio-file", {
+          uri: fileUri,
+          type: "audio/x-wav",
+          name: "file.wav",
+        });
+        xhr.send(formData);
+        if (xhr.upload) {
+          // track the upload progress
+          xhr.upload.onprogress = ({ total, loaded }) => {
+              const uploadProgress = (loaded / total);
+              console.log(uploadProgress);
+          };
+        }
+      
+        rec = null;
+        FileSystem.deleteAsync(fileUri);
+        var timeoutId = setTimeout(recordChunks.bind(this, stringId), 1000);
+        timeoutIds.current = [...timeoutIds.current, timeoutId];
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.upperPart}>
         <Text style={styles.text}>Standard Tuning</Text>
         <View style={{ width: 100 }}>
-          <Button title="Start Record" onPress={startRecording} />
-          <Button title="Stop Record" onPress={stopRecording} />
+         
         </View>
       </View>
       <View style={styles.lowerPart}>
@@ -71,7 +141,9 @@ const TunerScreen = () => {
               E
             </StringButton>
           </View>
+
           <Image source={guitarImg} style={styles.img} resizeMode="contain" />
+
           <View style={styles.buttons}>
             <StringButton
               onPress={handleSelectedString.bind(this, 3)}
@@ -149,6 +221,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "white",
+    fontSize: 18,
+    fontWeight: "bold"
   },
   btnActive: {
     backgroundColor: "grey",
