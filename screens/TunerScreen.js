@@ -7,6 +7,10 @@ import { Audio } from "expo-av";
 import recordingOptions from "../constants/recordingOptions";
 import { Sound } from "expo-av/build/Audio";
 import * as FileSystem from 'expo-file-system';
+import notes from "../constants/notes";
+import CustomGauge from "../components/CustomGauge";
+import { LinearGradient } from "expo-linear-gradient";
+
 
 const TunerScreen = () => {
   const [selectedString, setSelectedString] = useState();
@@ -17,7 +21,9 @@ const TunerScreen = () => {
   const prevStringRef = useRef(undefined);
   const recordingRef = useRef(false);
   const soundFrequencyRef = useRef(undefined);
+  const [soundFreq, setSoundFreq] = useState(0);
   const sleep = time => new Promise(resolve => setTimeout(resolve, time));
+
 
   useEffect(() => {
     repeat.current = buttonIsPressed;
@@ -48,6 +54,10 @@ const TunerScreen = () => {
     }
   };
 
+  useEffect(() => {
+    console.log("Input Freq: ", soundFreq);
+  }, [soundFreq])
+
   const recordChunks = async (stringId) => {
     if (repeat.current === true && stringId === stringIdRef.current) {
       try {
@@ -65,16 +75,19 @@ const TunerScreen = () => {
         // stop recording
         await rec.stopAndUnloadAsync();
         const { status } = await rec.createNewLoadedSoundAsync();
-        console.log("\nSTATUS: ", status);
+        //console.log("\nSTATUS: ", status);
 
         let fileUri = rec.getURI();
-        console.log("Recording stopped and stored at", fileUri);
+        console.log("Recording stopped");
 
+        // send data to server
         let xhr = new XMLHttpRequest();
         xhr.open('POST',"http://192.168.78.121:5000/post")
         xhr.onload = () => {
-          soundFrequencyRef.current = ParseInt(xhr.response);
-          console.log(soundFrequencyRef.current);
+          soundFrequencyRef.current = parseInt(xhr.response);
+          setSoundFreq(soundFrequencyRef.current);
+          // console.log(stringId)
+          //console.log(soundFrequencyRef.current);
           
         };
         xhr.onerror = e => {
@@ -94,10 +107,11 @@ const TunerScreen = () => {
           // track the upload progress
           xhr.upload.onprogress = ({ total, loaded }) => {
               const uploadProgress = (loaded / total);
-              console.log(uploadProgress);
+              //console.log(uploadProgress);
           };
         }
-      
+        
+        //unload objects
         rec = null;
         FileSystem.deleteAsync(fileUri);
         var timeoutId = setTimeout(recordChunks.bind(this, stringId), 1000);
@@ -109,11 +123,14 @@ const TunerScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient style={styles.container}  colors={['rgba(0,0,0,0.8)', 'transparent']}>
       <View style={styles.upperPart}>
         <Text style={styles.text}>Standard Tuning</Text>
-        <View style={{ width: 100 }}>
-         
+        <View style={styles.gaugeContainer}>
+          <CustomGauge 
+            inputFreq = {soundFrequencyRef.current} 
+            selectedStringId = {selectedString}
+          />
         </View>
       </View>
       <View style={styles.lowerPart}>
@@ -164,12 +181,12 @@ const TunerScreen = () => {
               btnId={5}
               selectedBtn={selectedString}
             >
-              E
+              e
             </StringButton>
           </View>
         </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -230,4 +247,9 @@ const styles = StyleSheet.create({
   btnNotActive: {
     backgroundColor: colors.secondary,
   },
+  gaugeContainer:{
+     width: "100%", 
+     height: '80%',
+     marginTop: '5%'
+  }
 });

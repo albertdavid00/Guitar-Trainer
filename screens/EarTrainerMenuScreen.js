@@ -1,5 +1,6 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, Button, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import LevelCard from "../components/LevelCard";
 import colors from "../constants/colors";
 import { useAuth } from "../contexts/AuthContext";
@@ -48,7 +49,7 @@ const EarTrainerMenu = (props) => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient style={styles.container}  colors={['rgba(0,0,0,0.8)', 'transparent']}>
       <View style={styles.textContainer}>
         <Text style={styles.text}> Game Levels </Text>
       </View>
@@ -78,7 +79,7 @@ const EarTrainerMenu = (props) => {
           Hard
         </LevelCard>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 const styles = StyleSheet.create({

@@ -16,6 +16,7 @@ import GameOver from "../components/GameOver";
 import { useAuth } from "../contexts/AuthContext";
 import { database } from "../firebase";
 import { ref, update } from "firebase/database";
+import { LinearGradient } from "expo-linear-gradient";
 
 const EarTrainerGameScreen = (props) => {
   const [numOfChords, setNumOfChords] = useState(0);
@@ -201,7 +202,7 @@ const EarTrainerGameScreen = (props) => {
   }, [score]);
 
   return (
-    <View style={styles.container}>
+    <LinearGradient style={styles.container} colors={['rgba(0,0,0,0.8)', 'transparent']}>
       <View style={styles.topSide}>
         <View>
           <Text style={{ color: colors.text, fontSize: 20 }}>
@@ -311,7 +312,7 @@ const EarTrainerGameScreen = (props) => {
           navigation={props.navigation}
         />
       )}
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -331,13 +332,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
-    backgroundColor: colors.primary,
+    // backgroundColor: colors.primary,
   },
   playButton: {
     marginVertical: "10%",
     width: Dimensions.get("window").width * 0.5,
     height: Dimensions.get("window").width * 0.5,
-    borderWidth: 1,
+    borderWidth: 3,
     borderRadius: (Dimensions.get("window").width * 0.5) / 2,
     backgroundColor: colors.secondary,
     justifyContent: "center",

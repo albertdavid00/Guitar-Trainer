@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.secondary,
-    borderWidth: 2,
+    borderWidth: 3,
     borderRadius: 5,
   },
   validAnswer: {

@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainMenuScreen from "./screens/MainMenuScreen";
 import EarTrainerMenu from "./screens/EarTrainerMenuScreen";
 import EarTrainerGameScreen from "./screens/EarTrainerGameScreen";
+import SongFinderScreen from "./screens/SongFinderScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import colors from "./constants/colors";
@@ -65,6 +66,13 @@ export default function App() {
               component={RegisterScreen}
               options={{
                 headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="Song Finder"
+              component={SongFinderScreen}
+              options={{
+                title: "Song Finder",
               }}
             />
           </Stack.Navigator>
