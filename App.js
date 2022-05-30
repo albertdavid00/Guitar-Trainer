@@ -12,6 +12,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import TunerScreen from "./screens/TunerScreen";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LogBox } from 'react-native';
+import SongDetailsScreen from "./screens/SongDetailsScreen";
 
 LogBox.ignoreLogs(['Setting a timer']);
 const Stack = createNativeStackNavigator();
@@ -58,14 +59,14 @@ export default function App() {
               name="Login"
               component={LoginScreen}
               options={{
-                headerShown: false,
+                headerShown: true,
               }}
             />
             <Stack.Screen
               name="Register"
               component={RegisterScreen}
               options={{
-                headerShown: false,
+                headerShown: true,
               }}
             />
             <Stack.Screen
@@ -73,6 +74,13 @@ export default function App() {
               component={SongFinderScreen}
               options={{
                 title: "Song Finder",
+              }}
+            />
+            <Stack.Screen
+              name="Song Details"
+              component={SongDetailsScreen}
+              options={{
+                title: "Details",
               }}
             />
           </Stack.Navigator>

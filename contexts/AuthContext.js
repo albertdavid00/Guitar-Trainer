@@ -46,7 +46,8 @@ export function AuthProvider({ children }) {
           username: username,
           easyHighscore: 0,
           mediumHighscore: 0,
-          hardHighscore: 0
+          hardHighscore: 0,
+          
         }).then(() => setUserInDb(true));
         return credentials.user.updateProfile({
           displayName: username,
