@@ -4,3 +4,5 @@ export default {
     text: '#fff',
     
 }
+// primary: "#7fcbd7",
+// secondary: "#857ebb",

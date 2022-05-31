@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
     borderWidth: 3,
     borderRadius: 5,
+    borderColor: 'white'
   },
   validAnswer: {
     backgroundColor: "green",

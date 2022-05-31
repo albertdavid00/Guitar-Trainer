@@ -13,6 +13,7 @@ import TunerScreen from "./screens/TunerScreen";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LogBox } from 'react-native';
 import SongDetailsScreen from "./screens/SongDetailsScreen";
+import SettingsScreen from "./screens/SettingsScreen";
 
 LogBox.ignoreLogs(['Setting a timer']);
 const Stack = createNativeStackNavigator();
@@ -81,6 +82,13 @@ export default function App() {
               component={SongDetailsScreen}
               options={{
                 title: "Details",
+              }}
+            />
+            <Stack.Screen
+              name="Settings"
+              component={SettingsScreen}
+              options={{
+                title: "User Settings",
               }}
             />
           </Stack.Navigator>

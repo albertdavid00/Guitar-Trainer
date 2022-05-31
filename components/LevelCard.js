@@ -39,12 +39,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     marginVertical: 20,
     width: "80%",
-    height: 140,
+    height: '20%',
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.secondary,
     borderWidth: 3,
     borderRadius: 20,
+    borderColor: 'white'
   },
   text: {
     color: colors.text,

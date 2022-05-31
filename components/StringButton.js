@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     
   },
   btnActive: {
-    backgroundColor: "grey",
+    backgroundColor: colors.primary,
   },
   btnNotActive: {
     backgroundColor: colors.secondary,

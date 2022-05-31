@@ -344,6 +344,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 30,
+    borderColor:'white'
   },
   playButtonText: {
     fontSize: 25,
