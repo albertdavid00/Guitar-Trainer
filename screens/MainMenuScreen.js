@@ -19,12 +19,14 @@ import {
   equalTo,
   set,
   update,
+  orderByValue,
+  orderByKey,
 } from "firebase/database";
 import { LinearGradient } from "expo-linear-gradient";
 
 const MainMenuScreen = ({ navigation }) => {
   const { currentUser, userData } = useAuth();
-
+  
   const goToSettings = () => {
     if (currentUser) navigation.navigate("Settings");
 	else navigation.navigate("Login");

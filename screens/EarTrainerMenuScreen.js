@@ -298,10 +298,10 @@ const styles = StyleSheet.create({
   },
   itemText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 14,
   },
   id: {
-    width: "5%",
+    width: "10%",
     alignItems: "center",
   },
   username: {
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   },
   firstRowText: {
     color: "yellow",
-    fontSize: 16,
+    fontSize: 14,
   },
   btnInfoContainer: {
     width: "100%",

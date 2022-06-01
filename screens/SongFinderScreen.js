@@ -66,11 +66,11 @@ const SongFinderScreen = (props) => {
     //await sound.replayAsync();
     let fileUri = rec.getURI();
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://192.168.78.121:5000/song");
+    xhr.open("POST", "http://192.168.129.121:5000/song");
     xhr.onload = () => {
       setSearching(false);
       const svResponse = xhr.response;
-      console.log(svResponse);
+      // console.log(svResponse);
       if (svResponse !== "No match found") setSong(JSON.parse(svResponse));
       else setSong("No match found!");
       // console.log(JSON.stringify(JSON.parse(svResponse), null, 2))

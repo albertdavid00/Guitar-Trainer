@@ -10,7 +10,7 @@ import React, { useState, useEffect } from "react";
 import colors from "../constants/colors";
 import { useAuth } from "../contexts/AuthContext";
 import { database } from "../firebase";
-import { ref, get, child, query, orderByChild, equalTo } from "firebase/database";
+import { ref, get, child, query, orderByValue, equalTo } from "firebase/database";
 
 const RegisterScreen = props => {
   const [email, setEmail] = useState("");
@@ -51,7 +51,7 @@ const RegisterScreen = props => {
     
     //DONE check if username already exists
     const dbRef = ref(database);
-    get(query(child(dbRef, "users"), orderByChild("username"), equalTo(trimmedUsername))).then(
+    get(query(child(dbRef, "usernames"), orderByValue(), equalTo(trimmedUsername))).then(
       async (snapshot) => {
         if(snapshot.exists()){
             setError("Username already exists")
@@ -62,7 +62,7 @@ const RegisterScreen = props => {
             setLoading(true);
             
             await register(email, trimmedUsername, password);
-
+            
             setLoading(false);
             props.navigation.reset({
               index: 0,
