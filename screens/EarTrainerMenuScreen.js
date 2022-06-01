@@ -11,16 +11,9 @@ import LevelCard from "../components/LevelCard";
 import colors from "../constants/colors";
 import { useAuth } from "../contexts/AuthContext";
 import { database } from "../firebase";
-import {
-  ref,
-  get,
-  child,
-  query,
-  orderByChild,
-  equalTo,
-  set,
-  update,
-} from "firebase/database";
+import { ref, get, child } from "firebase/database";
+import { Entypo } from "@expo/vector-icons";
+import InfoCard from "../components/InfoCard";
 
 const EarTrainerMenu = (props) => {
   const { currentUser, userData } = useAuth();
@@ -31,6 +24,7 @@ const EarTrainerMenu = (props) => {
   const [hardLocked, setHardLocked] = useState(true);
   const [btnSelected, setBtnSelected] = useState("levels");
   const [users, setUsers] = useState();
+  const [displayInfo, setDisplayInfo] = useState(false)
   useEffect(() => {
     if (!currentUser)
       props.navigation.reset({
@@ -119,7 +113,13 @@ const EarTrainerMenu = (props) => {
   };
   const renderUser = (user, id) => {
     return (
-      <View key={id} style={[styles.itemContainer, userData.uid === user.id ? {backgroundColor:'grey'} : undefined ]}>
+      <View
+        key={id}
+        style={[
+          styles.itemContainer,
+          userData.uid === user.id ? { backgroundColor: "grey" } : undefined,
+        ]}
+      >
         <View style={styles.id}>
           <Text style={styles.itemText}>{id}.</Text>
         </View>
@@ -139,11 +139,18 @@ const EarTrainerMenu = (props) => {
     );
   };
 
+
+
   return (
     <LinearGradient
       style={styles.container}
       colors={["rgba(0,0,0,0.8)", "transparent"]}
     >
+      <View style={styles.btnInfoContainer}>
+        <TouchableOpacity onPress={() => setDisplayInfo(prev => !prev)}>
+          <Entypo name="info-with-circle" size={30} color="#dbd3d3" />
+        </TouchableOpacity>
+      </View>
       <View style={styles.textContainer}>
         <TouchableOpacity
           style={styles.levelsTextContainer}
@@ -230,6 +237,9 @@ const EarTrainerMenu = (props) => {
           </ScrollView>
         </View>
       )}
+      {displayInfo && (
+        <InfoCard />
+      )}
     </LinearGradient>
   );
 };
@@ -243,7 +253,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: "10%",
+    marginTop: "0%",
   },
   text: {
     fontSize: 18,
@@ -284,7 +294,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomColor: "white",
     borderBottomWidth: 1,
-    borderRadius: 5
+    borderRadius: 5,
   },
   itemText: {
     color: "white",
@@ -313,14 +323,19 @@ const styles = StyleSheet.create({
   },
   firstRowContainer: {
     flexDirection: "row",
-    width:'80%',
-    borderBottomColor:'yellow',
+    width: "80%",
+    borderBottomColor: "yellow",
     borderBottomWidth: 1,
     padding: 5,
   },
-  firstRowText:{
-    color:'yellow',
-    fontSize: 16
-  }
+  firstRowText: {
+    color: "yellow",
+    fontSize: 16,
+  },
+  btnInfoContainer: {
+    width: "100%",
+    alignItems: "center",
+    marginVertical: "5%",
+  },
 });
 export default EarTrainerMenu;

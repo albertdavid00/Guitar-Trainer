@@ -76,7 +76,7 @@ const SettingsScreen = (props) => {
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>Favorites</Text>
-            <Text style={styles.infoText}> {numOfSongs} </Text>
+            <Text style={styles.infoText}> {numOfSongs} songs </Text>
           </View>
         </LinearGradient>
         <TouchableOpacity style={styles.btn} onPress={handleLogout}>
